@@ -1,0 +1,48 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+    <h1>Weather API App</h1>
+    <input type="text" id="cityInput" placeholder="Введите город" />
+    <button id="getWeatherBtn">Показать погоду</button>
+
+    <div id="weatherResult"></div>
+</div>
+
+<script>
+    document.getElementById('getWeatherBtn').addEventListener('click', async () => {
+        const city = document.getElementById('cityInput').value;
+        const response = await fetch(`/api/weather?city=${city}`);
+        const data = await response.json();
+
+        // Показать данные о погоде, новостях, качестве воздуха и валюте
+        document.getElementById('weatherResult').innerHTML = `
+                <h2>Погода в ${city}</h2>
+                <p>Температура: ${data.weather.temperature}°C</p>
+                <p>Описание: ${data.weather.description}</p>
+                <p>Ощущается как: ${data.weather.feels_like}°C</p>
+                <p>Влажность: ${data.weather.humidity}%</p>
+                <p>Качество воздуха: ${data.air_quality} (AQI)</p>
+                <h3>Новости:</h3>
+                <ul>
+                    ${data.news.map(article => `
+                        <li>
+                            ${article.urlToImage ? `<img src="${article.urlToImage}" alt="news image">` : ''}
+                            <a href="${article.url}" target="_blank">${article.title}</a>
+                        </li>
+                    `).join('')}
+                </ul>
+                <p>Курс USD к KZT: ${data.currency.USD_to_KZT}</p>
+            `;
+    });
+</script>
+
+</body>
+</html>
