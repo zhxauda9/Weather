@@ -11,7 +11,6 @@ router.get('/weather', async (req, res) => {
     const { city } = req.query;
 
     try {
-        // Параллельное выполнение запросов
         const weatherPromise = axios.get(
             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}&units=metric`
         );
@@ -23,8 +22,6 @@ router.get('/weather', async (req, res) => {
         const currencyPromise = axios.get(
             `https://v6.exchangerate-api.com/v6/${CURRENCY_API_KEY}/latest/USD`
         );
-
-        // Выполнение запросов параллельно
         const [weatherResponse, newsResponse, currencyResponse] = await Promise.all([
             weatherPromise,
             newsPromise,
@@ -32,20 +29,18 @@ router.get('/weather', async (req, res) => {
         ]);
 
         const weatherData = weatherResponse.data;
-        const newsData = newsResponse.data.articles.slice(0, 5); // Ограничиваем новостями
+        const newsData = newsResponse.data.articles.slice(0, 5);
         const { lat, lon } = weatherData.coord;
 
-        // Запрос к API качества воздуха с использованием координат
         const airResponse = await axios.get(
             `https://api.ambeedata.com/latest/by-lat-lng?lat=${lat}&lng=${lon}`,
             { headers: { 'x-api-key': AIR_API_KEY } }
         );
 
         const airData = airResponse.data;
-        const airQuality = airData.stations && airData.stations.length > 0 ? airData.stations[0].AQI : 'Нет данных';
+        const airQuality = airData.stations && airData.stations.length > 0 ? airData.stations[0].AQI : 'No data';
         const currencyData = currencyResponse.data.conversion_rates;
 
-        // Отправляем данные на клиент
         res.json({
             weather: {
                 temperature: weatherData.main.temp,
@@ -73,5 +68,4 @@ router.get('/weather', async (req, res) => {
         res.status(500).json({ error: 'Ошибка при получении данных.' });
     }
 });
-
 module.exports = router;

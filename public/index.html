@@ -11,8 +11,8 @@
 <body style="background-image: url('default.jpg');background-size: cover; height:700px; ">
 <div class="container">
     <h1>Weather API App</h1>
-    <input type="text" id="cityInput" placeholder="Введите город" />
-    <button id="getWeatherBtn">Показать погоду</button>
+    <input type="text" id="cityInput" placeholder="Enter city" />
+    <button id="getWeatherBtn">Show Weather</button>
 
     <div id="weatherResult"></div>
 </div>
@@ -24,13 +24,13 @@
         const data = await response.json();
 
         document.getElementById('weatherResult').innerHTML = `
-                <h2>Погода в ${city}</h2>
-                <p>Температура: ${data.weather.temperature}°C</p>
-                <p>Описание: ${data.weather.description}</p>
-                <p>Ощущается как: ${data.weather.feels_like}°C</p>
-                <p>Влажность: ${data.weather.humidity}%</p>
-                <p>Качество воздуха: ${data.air_quality} (AQI)</p>
-                <h3>Новости:</h3>
+                <h2>Weather in ${city}</h2>
+                <p>Temperature: ${data.weather.temperature}°C</p>
+                <p>Weather: ${data.weather.description}</p>
+                <p>Real Feel: ${data.weather.feels_like}°C</p>
+                <p>Humidity: ${data.weather.humidity}%</p>
+                <p>Ait Quality: ${data.air_quality} (AQI)</p>
+                <h3>News:</h3>
                 <ul>
                     ${data.news.map(article => `
                         <li>
@@ -39,16 +39,14 @@
                         </li>
                     `).join('')}
                 </ul>
-                <p>Курс USD к KZT: ${data.currency.USD_to_KZT}</p>
+                <p>Currency 1 USD to KZT: ${data.currency.USD_to_KZT}</p>
             `;
-
         const temp = data.weather.temperature;
         if (temp < 0) {
-            document.body.style.backgroundImage = 'url(cold-weather.jpg)'; // Холодная погода
+            document.body.style.backgroundImage = 'url(cold-weather.jpg)';
         } else if (temp > 0) {
-            document.body.style.backgroundImage = 'url("hot-weather.jpeg")'; // Жаркая погода
+            document.body.style.backgroundImage = 'url("hot-weather.jpeg")';
         }
-
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
     });
