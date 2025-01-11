@@ -9,5 +9,5 @@ app.use(express.static('public'));
 app.use('/api', weatherRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
+    console.log(`Server started on http://localhost:${PORT}`);
 });

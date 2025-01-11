@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather App</title>
     <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body style="background-image: url('default.jpg');background-size: cover; height:700px; ">
 <div class="container">
     <h1>Weather API App</h1>
     <input type="text" id="cityInput" placeholder="Введите город" />
@@ -22,7 +23,6 @@
         const response = await fetch(`/api/weather?city=${city}`);
         const data = await response.json();
 
-        // Показать данные о погоде, новостях, качестве воздуха и валюте
         document.getElementById('weatherResult').innerHTML = `
                 <h2>Погода в ${city}</h2>
                 <p>Температура: ${data.weather.temperature}°C</p>
@@ -41,8 +41,17 @@
                 </ul>
                 <p>Курс USD к KZT: ${data.currency.USD_to_KZT}</p>
             `;
+
+        const temp = data.weather.temperature;
+        if (temp < 0) {
+            document.body.style.backgroundImage = 'url(cold-weather.jpg)'; // Холодная погода
+        } else if (temp > 0) {
+            document.body.style.backgroundImage = 'url("hot-weather.jpeg")'; // Жаркая погода
+        }
+
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
     });
 </script>
-
 </body>
 </html>
