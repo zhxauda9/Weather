@@ -7,40 +7,61 @@
     <title>Weather App</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
 </head>
-<body style="background-image: url('default.jpg');background-size: cover; height:700px; ">
+<body style="background-image: url('default.jpg');background-size: cover; height:700px;">
 <div class="container">
     <h1>Weather API App</h1>
     <input type="text" id="cityInput" placeholder="Enter city" />
     <button id="getWeatherBtn">Show Weather</button>
 
     <div id="weatherResult"></div>
+    <div id="map"></div>
 </div>
 
 <script>
+    let map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 0, lng: 0 },
+            zoom: 8,
+        });
+    }
+
     document.getElementById('getWeatherBtn').addEventListener('click', async () => {
         const city = document.getElementById('cityInput').value;
         const response = await fetch(`/api/weather?city=${city}`);
         const data = await response.json();
 
+        // Показать погоду
         document.getElementById('weatherResult').innerHTML = `
-                <h2>Weather in ${city}</h2>
-                <p>Temperature: ${data.weather.temperature}°C</p>
-                <p>Weather: ${data.weather.description}</p>
-                <p>Real Feel: ${data.weather.feels_like}°C</p>
-                <p>Humidity: ${data.weather.humidity}%</p>
-                <p>Ait Quality: ${data.air_quality} (AQI)</p>
-                <h3>News:</h3>
-                <ul>
-                    ${data.news.map(article => `
-                        <li>
-                            ${article.urlToImage ? `<img src="${article.urlToImage}" alt="news image">` : ''}
-                            <a href="${article.url}" target="_blank">${article.title}</a>
-                        </li>
-                    `).join('')}
-                </ul>
-                <p>Currency 1 USD to KZT: ${data.currency.USD_to_KZT}</p>
-            `;
+            <h2>Weather in ${city}</h2>
+            <p>Temperature: ${data.weather.temperature}°C</p>
+            <p>Weather: ${data.weather.description}</p>
+            <p>Real Feel: ${data.weather.feels_like}°C</p>
+            <p>Humidity: ${data.weather.humidity}%</p>
+            <p>Ait Quality: ${data.air_quality} (AQI)</p>
+            <h3>News:</h3>
+            <ul>
+                ${data.news.map(article => `
+                    <li>
+                        ${article.urlToImage ? `<img src="${article.urlToImage}" alt="news image">` : ''}
+                        <a href="${article.url}" target="_blank">${article.title}</a>
+                    </li>
+                `).join('')}
+            </ul>
+            <p>Currency 1 USD to KZT: ${data.currency.USD_to_KZT}</p>
+        `;
+
+        // Установить фон в зависимости от температуры
         const temp = data.weather.temperature;
         if (temp < 0) {
             document.body.style.backgroundImage = 'url(cold-weather.jpg)';
@@ -49,6 +70,16 @@
         }
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
+
+        // Отобразить местоположение на карте
+        const { lat, lon } = data.weather.coordinates;
+        const cityLocation = { lat: lat, lng: lon };
+        map.setCenter(cityLocation);
+        new google.maps.Marker({
+            position: cityLocation,
+            map: map,
+            title: city,
+        });
     });
 </script>
 </body>

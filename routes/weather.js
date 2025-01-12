@@ -1,3 +1,4 @@
+// weather.js
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
@@ -16,12 +17,13 @@ router.get('/weather', async (req, res) => {
         );
 
         const newsPromise = axios.get(
-            `https://newsapi.org/v2/everything?q=${city}&apiKey=${NEWS_API_KEY}` // Добавляем город в запрос новостей
+            `https://newsapi.org/v2/everything?q=${city}&apiKey=${NEWS_API_KEY}`
         );
 
         const currencyPromise = axios.get(
             `https://v6.exchangerate-api.com/v6/${CURRENCY_API_KEY}/latest/USD`
         );
+
         const [weatherResponse, newsResponse, currencyResponse] = await Promise.all([
             weatherPromise,
             newsPromise,
@@ -68,4 +70,5 @@ router.get('/weather', async (req, res) => {
         res.status(500).json({ error: 'Ошибка при получении данных.' });
     }
 });
+
 module.exports = router;
